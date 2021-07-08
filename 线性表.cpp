@@ -216,7 +216,43 @@ void Exchange(int A[], int m, int n) {
 }
 
 /*
-sds
+    从有序表---中获取数值为x的元素，找到之后跟其后续元素互换，找不到，将其插入表中,并使表中元素依然有序
+
+    返回的是从0开始的坐标--返回的是最后一个与元素值相等的节点
+*/
+int FindNodeInOrder(SqList& L, int left, int right,int e) {
+    int i = (left + right) / 2;
+    if (left != right||left<right) {
+        if (e < *(L.elem + i)) {
+            return FindNodeInOrder(L, 0, i-1, e);//这里一定要是i-1,否则找到的值就变成了第一个大于e的节点了
+        }
+        if (e >= * (L.elem + i)) {
+            return FindNodeInOrder(L, i + 1, right, e);
+        }
+    }
+    else if (left == right) {
+        return i;
+    }
+}
+bool InsertOrReverse(SqList& L, int e) {
+    int t = FindNodeInOrder(L, 0, L.length-1, e);
+    if (*(L.elem + t) == e && t < L.length) {
+        int temp;
+        temp = *(L.elem + t);
+        *(L.elem + t) = *(L.elem + t + 1);
+        *(L.elem + t + 1) = temp;
+    }
+    if (t == L.length) return false;
+    if(*(L.elem + t) > e){
+        ListInsert_Sq(L, t + 1, e);//插入的函数是从1开始的，返回的t是从0开始的
+    }
+    if(*(L.elem + t) < e){
+        ListInsert_Sq(L, t + 2, e);
+    }
+    return true;
+}
+/*
+测试代码
 */
 int main()
 {
@@ -235,13 +271,13 @@ int main()
     SqList test2;
     InitList_Sq(test2);
     ListInsert_Sq(test2, 1, 2);
-    ListInsert_Sq(test2, 2, 2);
-    ListInsert_Sq(test2, 3, 2);
-    ListInsert_Sq(test2, 4, 3);
-    ListInsert_Sq(test2, 5, 4);
-    ListInsert_Sq(test2, 6, 5);
-    ListInsert_Sq(test2, 7, 5);
-    ListInsert_Sq(test2, 8, 6);
+    ListInsert_Sq(test2, 2, 3);
+    ListInsert_Sq(test2, 3, 4);
+    ListInsert_Sq(test2, 4, 5);
+    ListInsert_Sq(test2, 5, 6);
+    ListInsert_Sq(test2, 6, 7);
+    ListInsert_Sq(test2, 7, 8);
+    ListInsert_Sq(test2, 8, 9);
 
     //测试删除最小的元素
     //int tag;
@@ -270,14 +306,20 @@ int main()
     //ListPrint_Sq(test3);
 
     //测试反转
-    int A[5];
-    A[0] = 3;
-    A[1] = 2;
-    A[2] = 1;
-    A[3] = 5;
-    A[4] = 4;
-    Exchange(A, 3, 2);
-    printf_s("test");
+    //int A[5];
+    //A[0] = 3;
+    //A[1] = 2;
+    //A[2] = 1;
+    //A[3] = 5;
+    //A[4] = 4;
+    //Exchange(A, 3, 2);
+    //printf_s("test");
+
+    //测试在有序表中找到元素
+    //InsertOrReverse(test, 1);//√
+    InsertOrReverse(test, 2);//√
+    //InsertOrReverse(test, 7);
+    ListPrint_Sq(test);
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
